@@ -2,17 +2,19 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class PsicoderToGo extends PsicoderBaseListener{
-    HashMap<String, String> translate_types = new HashMap<>();
-
+    HashMap<String, ArrayList<String>> translate_types = new HashMap<>();
+    HashMap<String, ArrayList<String>> variable_types = new HashMap<>();
     public PsicoderToGo() {
-        translate_types.put("entero", "int");
-        translate_types.put("real", "float64");
-        translate_types.put("caracter", "byte");
-        translate_types.put("booleano", "bool");
-        translate_types.put("cadena", "string");
+        translate_types.put("entero", new ArrayList(Arrays.asList("int", "d")));
+        translate_types.put("real", new ArrayList(Arrays.asList("float64", "f")));
+        translate_types.put("caracter", new ArrayList(Arrays.asList("byte", "c")));
+        translate_types.put("booleano", new ArrayList(Arrays.asList("bool", "b")));
+        translate_types.put("cadena", new ArrayList(Arrays.asList("string", "s")));
 
     }
 
@@ -40,6 +42,7 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void exitMain(PsicoderParser.MainContext ctx) {
+        nested_level--;
         System.out.println("}");
     }
 
@@ -71,14 +74,13 @@ public class PsicoderToGo extends PsicoderBaseListener{
     @Override
     public void exitEstructura(PsicoderParser.EstructuraContext ctx) {
         nested_level--;
-        printTabs();
         System.out.println("}");
     }
 
     @Override
     public void enterEstruct_body(PsicoderParser.Estruct_bodyContext ctx) {
-        printTabs();
         if(ctx.data_type() != null){
+            printTabs();
             for(int i = 0; i < ctx.ID().size(); i++){
                 if ( i < ctx.ID().size() - 1){
                     System.out.print(ctx.ID(i).getText() + ", ");
@@ -86,7 +88,7 @@ public class PsicoderToGo extends PsicoderBaseListener{
                     System.out.print(ctx.ID(i).getText() +  " ");
                 }
             }
-            System.out.println(" "+ translate_types.get(ctx.data_type().getText()));
+            System.out.println(" "+ translate_types.get(ctx.data_type().getText()).get(0));
         }
     }
 
@@ -97,27 +99,37 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterFunction(PsicoderParser.FunctionContext ctx) {
-        super.enterFunction(ctx);
+        System.out.print("func " + ctx.ID() + "(");
+        nested_level++;
     }
 
     @Override
     public void exitFunction(PsicoderParser.FunctionContext ctx) {
-        super.exitFunction(ctx);
+        nested_level--;
+        System.out.println("}");
     }
 
     @Override
     public void enterParameters(PsicoderParser.ParametersContext ctx) {
-        super.enterParameters(ctx);
+        for(int i = 0; i < ctx.ID().size(); i++){
+            if ( i < ctx.ID().size() - 1){
+                System.out.print(ctx.ID(i).getText() + " " + translate_types.get(ctx.data_type(i).getText()).get(0) + ", ");
+            }else{
+                System.out.print(ctx.ID(i).getText() + " " + translate_types.get(ctx.data_type(i).getText()).get(0));
+            }
+        }
     }
 
     @Override
     public void exitParameters(PsicoderParser.ParametersContext ctx) {
-        super.exitParameters(ctx);
+        System.out.println(") {");
+        nested_level++;
     }
 
     @Override
     public void enterReturn_(PsicoderParser.Return_Context ctx) {
-        super.enterReturn_(ctx);
+        printTabs();
+        System.out.println("return " + ctx.expr().getText());
     }
 
     @Override
@@ -147,7 +159,14 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterRead(PsicoderParser.ReadContext ctx) {
-        super.enterRead(ctx);
+        printTabs();
+        String name_variable = ctx.id_c().getText();
+        try{
+            System.out.println("fmt.Scanf(\"%"/*+translate_types.get(hashmap(name_variable)).get(1)*/ + "\", "+name_variable);
+        }catch(Exception e){
+            System.out.println("La variable " + name_variable + " No ha sido declarada");
+        }
+
     }
 
     @Override
@@ -157,7 +176,15 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterPrint(PsicoderParser.PrintContext ctx) {
-        super.enterPrint(ctx);
+        printTabs();
+        System.out.print("fmt.Println(");
+        for(int i = 0; i < ctx.expr().size(); i++){
+            if ( i < ctx.expr().size() - 1){
+                System.out.print(ctx.expr(i).getText() + ", ");
+            }else{
+                System.out.println(ctx.expr(i).getText() + ")");
+            }
+        }
     }
 
     @Override
@@ -167,7 +194,10 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterElse_(PsicoderParser.Else_Context ctx) {
-        super.enterElse_(ctx);
+        nested_level--;
+        printTabs();
+        System.out.println("} else {");
+        nested_level++;
     }
 
     @Override
@@ -177,22 +207,46 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterWhile_(PsicoderParser.While_Context ctx) {
-        super.enterWhile_(ctx);
+        printTabs();
+        System.out.println("for {");
+        nested_level++;
+        printTabs();
+        System.out.println("if(!("+ctx.expr().getText()+")){");
+        nested_level++;
+        printTabs();
+        System.out.println("break");
+        nested_level--;
+        printTabs();
+        System.out.println("}");
     }
 
     @Override
     public void exitWhile_(PsicoderParser.While_Context ctx) {
-        super.exitWhile_(ctx);
+        nested_level--;
+        printTabs();
+        System.out.println("}");
     }
 
     @Override
     public void enterDo_while_(PsicoderParser.Do_while_Context ctx) {
-        super.enterDo_while_(ctx);
+        printTabs();
+        System.out.println("for {");
+        nested_level++;
     }
 
     @Override
     public void exitDo_while_(PsicoderParser.Do_while_Context ctx) {
-        super.exitDo_while_(ctx);
+        printTabs();
+        System.out.println("if(!("+ctx.expr().getText()+")){");
+        nested_level++;
+        printTabs();
+        System.out.println("break");
+        nested_level--;
+        printTabs();
+        System.out.println("}");
+        nested_level--;
+        printTabs();
+        System.out.println("}");
     }
 
     @Override
