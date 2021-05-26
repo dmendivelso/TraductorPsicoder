@@ -1,26 +1,16 @@
-funcion entero sum(entero a, entero b) hacer
-    retornar a + b;
-    // fin
-fin_funcion
-
 funcion_principal
+   entero n;
+   booleano flag = falso;
+   leer( n );
+   para (entero i = 2 ; i < n ; 1 ) hacer
+   si ( n % i == 0 ) entonces
+    	imprimir( "no es primo");
+         flag = verdadero;
+        	   fin_si
+   fin_para
+    si ( flag == falso ) entonces
+   	imprimir("es primo");
+   si_no
 
-    si(sum(1,2) >= 3) entonces
-        imprimir( sum(1,2), "hola perro");
-    si_no
-        imprimir("no me parece correcto");
-        mientras (3 == 3) hacer
-            imprimir("3 sigue siendo igual a 3");
-            hacer
-                imprimir(" y a sigue siendo menor a 2")
-                a = a + 1;
-            mientras(a < 2);
-        fin_mientras
-    fin_si
-
-fin_principal
-
-estructura Point
-    entero a;
-    entero b;
-fin_estructura
+   fin_si
+ fin_principal

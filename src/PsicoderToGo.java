@@ -251,7 +251,9 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterFor_(PsicoderParser.For_Context ctx) {
-        super.enterFor_(ctx);
+        printTabs();
+        System.out.println("for"
+
     }
 
     @Override
@@ -301,7 +303,9 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterDeclaration(PsicoderParser.DeclarationContext ctx) {
-        super.enterDeclaration(ctx);
+        printTabs();
+        //System.out.println(ctx.data_type().getText() + );
+
     }
 
     @Override
