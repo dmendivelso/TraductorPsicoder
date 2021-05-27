@@ -49,16 +49,13 @@ defect: DEFECTO DOS_P commands (ROMPER PYC)?;
 assign : id_c ASIG expr ;
 declaration : data_type (ID (ASIG expr)?) (COMA ID (ASIG expr)?)*;
 
-call_function : ID PAR_IZQ send_parameters PAR_DER;
-send_parameters
-    : expr (COMA expr)*
-    | ;
+call_function : ID PAR_IZQ (expr (COMA expr)*)? PAR_DER;
 
 expr
     : data (operator expr)*
     | MENOS expr
     | NEG expr
-    | PAR_IZQ expr PAR_DER;
+    | PAR_IZQ expr PAR_DER (operator expr)*;
 
 data
     : DATA_ENTERO

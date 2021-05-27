@@ -1,12 +1,15 @@
+funcion entero sum(entero a, entero b) hacer
+    retornar a + b;
+    // fin
+fin_funcion
+
 funcion_principal
-   entero n ;
-   booleano flag = true;
-   leer(n);
-   para (entero i = 1 ; i <= n ; 1 ) hacer
-       si ( n % i == 0 ) entonces
-            imprimir( i, "no es primo");
-            flag = false;
-       fin_si
-   fin_para
-   si (
- fin_principal
+
+    imprimir( sum(1,2));
+
+fin_principal
+
+estructura Point
+    entero a;
+    entero b;
+fin_estructura
