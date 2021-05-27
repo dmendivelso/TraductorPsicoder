@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PsicoderToGo extends PsicoderBaseListener{
+public class PsicoderToGo extends PsicoderBaseListener {
     HashMap<String, ArrayList<String>> translate_types = new HashMap<>();
     HashMap<String, ArrayList<String>> variable_types = new HashMap<>();
     public PsicoderToGo() {
@@ -21,8 +21,9 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     int nested_level = 0;
     boolean inicio = false;
-    public void printTabs(){
-        for(int i = 0; i < nested_level; ++i){
+
+    public void printTabs() {
+        for (int i = 0; i < nested_level; ++i) {
             System.out.print("\t");
         }
     }
@@ -80,16 +81,16 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterEstruct_body(PsicoderParser.Estruct_bodyContext ctx) {
-        if(ctx.data_type() != null){
+        if (ctx.data_type() != null) {
             printTabs();
-            for(int i = 0; i < ctx.ID().size(); i++){
-                if ( i < ctx.ID().size() - 1){
+            for (int i = 0; i < ctx.ID().size(); i++) {
+                if (i < ctx.ID().size() - 1) {
                     System.out.print(ctx.ID(i).getText() + ", ");
-                }else{
-                    System.out.print(ctx.ID(i).getText() +  " ");
+                } else {
+                    System.out.print(ctx.ID(i).getText() + " ");
                 }
             }
-            System.out.println(" "+ translate_types.get(ctx.data_type().getText()).get(0));
+            System.out.println(" " + translate_types.get(ctx.data_type().getText()).get(0));
         }
     }
 
@@ -112,10 +113,10 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterParameters(PsicoderParser.ParametersContext ctx) {
-        for(int i = 0; i < ctx.ID().size(); i++){
-            if ( i < ctx.ID().size() - 1){
+        for (int i = 0; i < ctx.ID().size(); i++) {
+            if (i < ctx.ID().size() - 1) {
                 System.out.print(ctx.ID(i).getText() + " " + translate_types.get(ctx.data_type(i).getText()).get(0) + ", ");
-            }else{
+            } else {
                 System.out.print(ctx.ID(i).getText() + " " + translate_types.get(ctx.data_type(i).getText()).get(0));
             }
         }
@@ -195,10 +196,13 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterElse_(PsicoderParser.Else_Context ctx) {
-        nested_level--;
-        printTabs();
-        System.out.println("} else {");
-        nested_level++;
+        if (ctx.SI_NO() != null) {
+            nested_level--;
+            printTabs();
+            System.out.println("} else {");
+            nested_level++;
+        }
+
     }
 
     @Override
@@ -265,32 +269,46 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterSwitch_(PsicoderParser.Switch_Context ctx) {
-        super.enterSwitch_(ctx);
+        printTabs();
+        System.out.println("switch " + ctx.id_c().getText() + "{");
+        nested_level++;
     }
 
     @Override
     public void exitSwitch_(PsicoderParser.Switch_Context ctx) {
-        super.exitSwitch_(ctx);
+        nested_level--;
+        printTabs();
+        System.out.println("}");
     }
 
     @Override
     public void enterCaso(PsicoderParser.CasoContext ctx) {
-        super.enterCaso(ctx);
+        printTabs();
+        System.out.println("case "+ ctx.expr().getText() +" :");
+        nested_level++;
     }
 
     @Override
     public void exitCaso(PsicoderParser.CasoContext ctx) {
-        super.exitCaso(ctx);
+        if(ctx.ROMPER() != null){
+            System.out.println("break;");
+        }
+        nested_level--;
     }
 
     @Override
     public void enterDefect(PsicoderParser.DefectContext ctx) {
-        super.enterDefect(ctx);
+        printTabs();
+        System.out.println("default :");
+        nested_level++;
     }
 
     @Override
     public void exitDefect(PsicoderParser.DefectContext ctx) {
-        super.exitDefect(ctx);
+        if(ctx.ROMPER() != null){
+            System.out.println("break;");
+        }
+        nested_level--;
     }
 
     @Override
@@ -305,34 +323,33 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterDeclaration(PsicoderParser.DeclarationContext ctx) {
-        if(!pending_for){
+        if (!pending_for) {
             printTabs();
             String exprs = "";
             System.out.print("var ");
             int id_count = 0;
             String tipo = ctx.data_type().getText();
-            for(int i = 0; i < ctx.getChildCount(); i++ ){
-                if(ctx.getChild(i) == ctx.ID(id_count)){
+            for (int i = 0; i < ctx.getChildCount(); i++) {
+                if (ctx.getChild(i) == ctx.ID(id_count)) {
                     String variable = ctx.ID(id_count).getText();
                     variable_types.put(variable, tipo);
                     System.out.print(variable);
-                    if(id_count < ctx.ID().size() -1){
+                    if (id_count < ctx.ID().size() - 1) {
                         System.out.print(", ");
                     }
-                    if(ctx.ASIG().size() > 0 && ctx.getChild(i+1).getText().equals("=")){
-                        exprs += translate_expr(ctx.getChild(i+2).getText());
-                    }else{
-                        exprs +=  translate_types.get(tipo).get(2);
+                    if (ctx.ASIG().size() > 0 && ctx.getChild(i + 1).getText().equals("=")) {
+                        exprs += translate_expr(ctx.getChild(i + 2).getText());
+                    } else {
+                        exprs += translate_types.get(tipo).get(2);
                     }
-                    if(id_count++ < ctx.ID().size() -1){
+                    if (id_count++ < ctx.ID().size() - 1) {
                         exprs += ", ";
                     }
                 }
             }
             System.out.print(" " + translate_types.get(tipo).get(0));
             System.out.println(" = " + exprs);
-        }
-        else{
+        } else {
             imprimir_for();
         }
     }
