@@ -2,20 +2,21 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class PsicoderToGo extends PsicoderBaseListener{
     HashMap<String, ArrayList<String>> translate_types = new HashMap<>();
     HashMap<String, ArrayList<String>> variable_types = new HashMap<>();
     public PsicoderToGo() {
-        translate_types.put("entero", new ArrayList(Arrays.asList("int", "d")));
-        translate_types.put("real", new ArrayList(Arrays.asList("float64", "f")));
-        translate_types.put("caracter", new ArrayList(Arrays.asList("byte", "c")));
-        translate_types.put("booleano", new ArrayList(Arrays.asList("bool", "b")));
-        translate_types.put("cadena", new ArrayList(Arrays.asList("string", "s")));
-
+        translate_types.put("entero", new ArrayList(Arrays.asList("int", "d", "0")));
+        translate_types.put("real", new ArrayList(Arrays.asList("float64", "f", "0.0")));
+        translate_types.put("caracter", new ArrayList(Arrays.asList("byte", "s", "\"\"")));
+        translate_types.put("booleano", new ArrayList(Arrays.asList("bool", "b", "false")));
+        translate_types.put("cadena", new ArrayList(Arrays.asList("string", "s", "\"\"")));
     }
 
     int nested_level = 0;
@@ -252,8 +253,9 @@ public class PsicoderToGo extends PsicoderBaseListener{
     @Override
     public void enterFor_(PsicoderParser.For_Context ctx) {
         printTabs();
-        System.out.println("for"
-
+        System.out.print("for ");
+        pending_for = true;
+        for_pendiente = ctx;
     }
 
     @Override
@@ -303,9 +305,36 @@ public class PsicoderToGo extends PsicoderBaseListener{
 
     @Override
     public void enterDeclaration(PsicoderParser.DeclarationContext ctx) {
-        printTabs();
-        //System.out.println(ctx.data_type().getText() + );
-
+        if(!pending_for){
+            printTabs();
+            String exprs = "";
+            System.out.print("var ");
+            int id_count = 0;
+            String tipo = ctx.data_type().getText();
+            for(int i = 0; i < ctx.getChildCount(); i++ ){
+                if(ctx.getChild(i) == ctx.ID(id_count)){
+                    String variable = ctx.ID(id_count).getText();
+                    variable_types.put(variable, tipo);
+                    System.out.print(variable);
+                    if(id_count < ctx.ID().size() -1){
+                        System.out.print(", ");
+                    }
+                    if(ctx.ASIG().size() > 0 && ctx.getChild(i+1).getText().equals("=")){
+                        exprs += translate_expr(ctx.getChild(i+2).getText());
+                    }else{
+                        exprs +=  translate_types.get(tipo).get(2);
+                    }
+                    if(id_count++ < ctx.ID().size() -1){
+                        exprs += ", ";
+                    }
+                }
+            }
+            System.out.print(" " + translate_types.get(tipo).get(0));
+            System.out.println(" = " + exprs);
+        }
+        else{
+            imprimir_for();
+        }
     }
 
     @Override
