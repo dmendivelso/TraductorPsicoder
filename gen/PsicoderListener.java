@@ -227,16 +227,6 @@ public interface PsicoderListener extends ParseTreeListener {
 	 */
 	void exitCall_function(PsicoderParser.Call_functionContext ctx);
 	/**
-	 * Enter a parse tree produced by {@link PsicoderParser#send_parameters}.
-	 * @param ctx the parse tree
-	 */
-	void enterSend_parameters(PsicoderParser.Send_parametersContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PsicoderParser#send_parameters}.
-	 * @param ctx the parse tree
-	 */
-	void exitSend_parameters(PsicoderParser.Send_parametersContext ctx);
-	/**
 	 * Enter a parse tree produced by {@link PsicoderParser#expr}.
 	 * @param ctx the parse tree
 	 */

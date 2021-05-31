@@ -279,18 +279,6 @@ public class PsicoderBaseListener implements PsicoderListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterSend_parameters(PsicoderParser.Send_parametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSend_parameters(PsicoderParser.Send_parametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterExpr(PsicoderParser.ExprContext ctx) { }
 	/**
 	 * {@inheritDoc}

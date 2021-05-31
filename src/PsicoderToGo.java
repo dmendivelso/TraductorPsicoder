@@ -406,16 +406,6 @@ public class PsicoderToGo extends PsicoderBaseListener {
     }
 
     @Override
-    public void enterSend_parameters(PsicoderParser.Send_parametersContext ctx) {
-        super.enterSend_parameters(ctx);
-    }
-
-    @Override
-    public void exitSend_parameters(PsicoderParser.Send_parametersContext ctx) {
-        super.exitSend_parameters(ctx);
-    }
-
-    @Override
     public void enterExpr(PsicoderParser.ExprContext ctx) {
         super.enterExpr(ctx);
     }
