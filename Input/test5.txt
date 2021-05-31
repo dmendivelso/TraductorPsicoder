@@ -5,5 +5,4 @@ funcion_principal
     leer( n );
     real x,y= 0;
     cadena s = false;
-    value;
 fin_principal
