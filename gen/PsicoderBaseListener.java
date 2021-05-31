@@ -1,4 +1,4 @@
-// Generated from R:/Documentos/Unal/7mo Semestre/Lng/ANTLR/ProyectoPsicoder/grammar\Psicoder.g4 by ANTLR 4.9.1
+// Generated from /home/manjaroleo/Desktop/Lenguajes/Trad/TraductorPsicoder/grammar/Psicoder.g4 by ANTLR 4.9.1
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
@@ -274,18 +274,6 @@ public class PsicoderBaseListener implements PsicoderListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCall_function(PsicoderParser.Call_functionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSend_parameters(PsicoderParser.Send_parametersContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSend_parameters(PsicoderParser.Send_parametersContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

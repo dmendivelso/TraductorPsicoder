@@ -1,0 +1,22 @@
+funcion entero sum(entero a, entero b) hacer
+    retornar a + b;
+    // fin
+fin_funcion
+
+funcion_principal
+    //"su cosa era verdadero" == "tal vez era falso" && verdadero
+    booleano a = verdadero;
+    si (a == falso) entonces
+        imprimir("el valor de a es falso");
+    si_no
+        a = falso;
+        imprimir(falso, "era verdadero pero ahora es falso");
+    fin_si
+
+
+fin_principal
+
+estructura Point
+    entero a;
+    entero b;
+fin_estructura

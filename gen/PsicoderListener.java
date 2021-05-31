@@ -1,4 +1,4 @@
-// Generated from R:/Documentos/Unal/7mo Semestre/Lng/ANTLR/ProyectoPsicoder/grammar\Psicoder.g4 by ANTLR 4.9.1
+// Generated from /home/manjaroleo/Desktop/Lenguajes/Trad/TraductorPsicoder/grammar/Psicoder.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**
@@ -226,16 +226,6 @@ public interface PsicoderListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCall_function(PsicoderParser.Call_functionContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link PsicoderParser#send_parameters}.
-	 * @param ctx the parse tree
-	 */
-	void enterSend_parameters(PsicoderParser.Send_parametersContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link PsicoderParser#send_parameters}.
-	 * @param ctx the parse tree
-	 */
-	void exitSend_parameters(PsicoderParser.Send_parametersContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link PsicoderParser#expr}.
 	 * @param ctx the parse tree

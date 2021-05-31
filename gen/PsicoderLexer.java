@@ -1,4 +1,4 @@
-// Generated from R:/Documentos/Unal/7mo Semestre/Lng/ANTLR/ProyectoPsicoder/grammar\Psicoder.g4 by ANTLR 4.9.1
+// Generated from /home/manjaroleo/Desktop/Lenguajes/Trad/TraductorPsicoder/grammar/Psicoder.g4 by ANTLR 4.9.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
