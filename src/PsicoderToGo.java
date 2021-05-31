@@ -11,6 +11,8 @@ import java.util.Map;
 public class PsicoderToGo extends PsicoderBaseListener {
     HashMap<String, ArrayList<String>> translate_types = new HashMap<>();
     HashMap<String, String> variable_types = new HashMap<>();
+    HashMap<String, ArrayList<String>> estructuras = new HashMap<>();
+    ArrayList<String> atributos_estructura = new ArrayList<>();
     //TODO: CREAR HASHMAP CON ESTRUCTURAS
     public PsicoderToGo() {
         translate_types.put("entero", new ArrayList(Arrays.asList("int", "d", "0")));
@@ -88,6 +90,7 @@ public class PsicoderToGo extends PsicoderBaseListener {
         System.out.println("}");
     }
 
+
     @Override
     public void enterEstructura(PsicoderParser.EstructuraContext ctx) {
         System.out.println("type " + ctx.ID().getText() + " struct {");
@@ -99,11 +102,14 @@ public class PsicoderToGo extends PsicoderBaseListener {
     public void exitEstructura(PsicoderParser.EstructuraContext ctx) {
         nested_level--;
         System.out.println("}");
+        estructuras.put(ctx.ID().getText(), atributos_estructura);
+        atributos_estructura = new ArrayList<>();
     }
 
     @Override
     public void enterEstruct_body(PsicoderParser.Estruct_bodyContext ctx) {
         if (ctx.data_type() != null) {
+
             printTabs();
             String type;
             if(ctx.data_type().ID() == null){
@@ -113,6 +119,7 @@ public class PsicoderToGo extends PsicoderBaseListener {
                 type = ctx.data_type().ID().getText();
             }
             for (int i = 0; i < ctx.ID().size(); i++) {
+                atributos_estructura.add(ctx.data_type().getText()+","+ctx.ID(i).getText());//Agregar a la lista de atributos
                 if (i < ctx.ID().size() - 1) {
                     System.out.print(ctx.ID(i).getText() + ", ");
                 } else {
@@ -120,7 +127,6 @@ public class PsicoderToGo extends PsicoderBaseListener {
                 }
             }
             System.out.println(" " + type);
-
         }
     }
 
@@ -378,18 +384,17 @@ public class PsicoderToGo extends PsicoderBaseListener {
     }
 
     public void ingresar_variables(String variable, String tipo) {
-        /*
-        //TODO: ITERAR POR CADA ATRIBUTO DE ESTRUCTURA E INGRESARLO A VARIABLE_TYPES
-        if(tipo == "entero" || tipo == "real" || tipo == "cadena" || tipo =="booleano" || tipo == "caracter") { // Si es primitivo lo ingresamos de una vez
+        if(tipo.equals( "entero" ) || tipo.equals( "real" ) || tipo.equals( "cadena" ) || tipo.equals("booleano" ) || tipo.equals( "caracter")) { // Si es primitivo lo ingresamos de una vez
             variable_types.put(variable, tipo);
         }
         else{ // Si no es primitivo iteramos por sus atributos y los ingresamos
-            for(ArrayList<String> var : hash_estructs.get(tipo)){ //obtener cada uno de los atributos de la estructura tipo
-                String nombre = var.get(0);
-                String t = var.get(1);
+            for(String var : estructuras.get(tipo)){ //obtener cada uno de los atributos de la estructura tipo
+                String[] decl = var.split(",");
+                String t = decl[0];
+                String nombre = decl[1];
                 ingresar_variables(variable + "." + nombre, t);
             }
-        }*/
+        }
     }
 
     @Override
@@ -431,8 +436,7 @@ public class PsicoderToGo extends PsicoderBaseListener {
 
                 }
             }
-            System.out.print(" " + (ctx.data_type().ID() == null ?  translate_types.get(tipo).get(0) : ctx.data_type().ID().getText()));
-            System.out.println(" = " + exprs);
+            System.out.println(" " + (ctx.data_type().ID() == null ?  translate_types.get(tipo).get(0)+ " = " + exprs : ctx.data_type().ID().getText()));
         } else {
             imprimir_for();
         }

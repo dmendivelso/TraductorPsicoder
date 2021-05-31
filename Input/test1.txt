@@ -16,5 +16,7 @@ funcion_principal
     p.x = 5;
     p.y = 10;
     p.c.a = 5;
-
+    entero number;
+    leer(p.c.x);
+    imprimir(p.c.a);
 fin_principal
